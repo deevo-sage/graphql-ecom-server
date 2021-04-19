@@ -7,11 +7,10 @@ export const typeDefs = gql`
     name: String!
     gender: String!
     country: String!
-    Int: Int
+    number: Int
     address: [Address]!
     order: [Order]!
     seller: Boolean
-    currency: String
     wallet: Int
   }
   type NormalUser implements User {
@@ -21,14 +20,13 @@ export const typeDefs = gql`
     name: String!
     gender: String!
     country: String!
-    Int: Int
+    number: Int
     address: [Address]!
     order: [Order]!
     seller: Boolean
-    wishlist: [Item]
-    currency: String
+    wishlist: [Item]!
     wallet: Int
-    cart: [CartItem]
+    cart: [CartItem]!
   }
   type Seller implements User {
     id: ID!
@@ -37,15 +35,14 @@ export const typeDefs = gql`
     name: String!
     gender: String!
     country: String!
-    Int: Int
+    number: Int
     address: [Address]!
     order: [Order]!
     seller: Boolean
-    currency: String
     wallet: Int
     gst: Int
-    items: [Item]
-    ordersRecieved: [Order]
+    items: [Item]!
+    ordersRecieved: [Order]!
   }
   type Address {
     line1: String!
@@ -53,71 +50,103 @@ export const typeDefs = gql`
     pincode: Int!
     state: String
   }
-  interface shopItem {
-    name: String!
-    description: String!
-    pictures: [String]!
-    price: Float!
-    currency: String!
-    Country: String!
-    multiNation: Boolean!
-    discount: Int
-    Stock: Int!
-    category: String!
-    sold: Int
-    wishlisted: [User]
-  }
-  type CartItem implements shopItem {
+
+  type CartItem {
+    _id: ID!
     amount: Int!
     name: String!
     description: String!
     pictures: [String]!
+    seller: Seller!
     price: Float!
-    currency: String!
-    Country: String!
-    multiNation: Boolean!
     discount: Int
-    Stock: Int!
+    stock: Int!
     category: String!
-    sold: Int
-    wishlisted: [User]
   }
 
-  type Item implements shopItem {
+  type Item {
+    _id: ID!
     name: String!
     description: String!
     pictures: [String]!
     price: Float!
-    currency: String!
-    Country: String!
-    multiNation: Boolean!
     discount: Int
-    Stock: Int!
+    seller: Seller!
+    stock: Int!
     category: String!
     sold: Int
     wishlisted: [User]
   }
   type Order {
-    items: [CartItem]!
+    items: [CartItem]
     userID: String!
     payment: Boolean!
     status: String!
+  }
+  input CartIteminput {
+    amount: Int!
+    id: ID!
+  }
+  input Addressinput {
+    line1: String!
+    line2: String!
+    pincode: Int!
+    state: String!
   }
   type Query {
     getUser: [User]!
     getOneUser(id: String!): User!
     getItem(id: String!): Item!
     getItems(limit: Int): [Item]!
-    getHomePageItems: [Item]!
-    getOrders(id: String): [Order]!
+    getCategoryItems(category: String!, limit: Int): [Item]!
+    getOrders: [Order]!
   }
   type Mutation {
-    createUser(name: String!, email: String!, password: String!): User!
-    updateUser(name: String): User!
-    createItem(name: String): Item!
-    updateItem(name: String): Item!
-    createOrder(name: String): Order!
-    updateOrder(name: String): Order!
-    deleteItem(id: String): Item!
+    createUser(
+      name: String!
+      email: String!
+      password: String!
+      number: Int
+      gender: String!
+      country: String!
+    ): User!
+    updateUser(
+      id: String!
+      name: String!
+      email: String!
+      password: String!
+      number: Int!
+      gender: String!
+      country: String!
+      seller: Boolean!
+    ): User!
+    updateAddress(id: String!, address: [Addressinput]!): User
+    updateWishlist(id: String!, wishlist: [String]!): User!
+    updateCart(id: String!, cart: [CartIteminput]!): User!
+    createItem(
+      name: String!
+      description: String!
+      price: Int!
+      seller: String!
+    ): Item!
+    updateItem(
+      id: String!
+      name: String!
+      description: String!
+      price: Int!
+      discount: Int!
+      stock: Int!
+      category: String!
+    ): Item!
+    updatePictures(id: String!, pictures: [String]!): Item!
+    itemSold(id: String!, amount: Int): Item!
+    deleteItem(id: String!): Item!
+    createOrder(
+      userId: String!
+      payment: Boolean!
+      status: String!
+      orderedItems: [CartIteminput]!
+    ): Order!
+    updateOrder(id: String!, payment: Boolean!, status: String!): Order!
   }
 `;

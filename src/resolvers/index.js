@@ -1,35 +1,24 @@
-import User from "../models/user";
-import Seller from "../models/Seller";
-import Order from "../models/orders";
-import Item from "../models/item";
+import { UserMutations, UserQueries, NormalUser } from "./user";
+import { OrderMutations, OrderQueries } from "./orders";
+import { ItemMutations, ItemQueries, Itemresolver } from "./item";
+
+import typeresolvers from "./typeresolver";
 export const resolvers = {
   Query: {
-    getUser: async () => {
-      const users = await User.find({});
-      return users;
-    },
+    ...UserQueries,
+    ...ItemQueries,
+    ...OrderQueries,
   },
   Mutation: {
-    createUser: async (_, { name, email, password }) => {
-      let newuser = new User({ name, email, password });
-      newuser.id = newuser._id;
-      await newuser.save();
-      return newuser;
-    },
+    ...UserMutations,
+    ...ItemMutations,
+    ...OrderMutations,
   },
-  User: {
-    __resolveType: (user) => {
-      if (user.seller) return "Seller";
-      return "NormalUser";
-    },
-  },
-  shopItem: {
-    __resolveType: (item) => {
-      if (item.amount) {
-        return "CartItem";
-      } else {
-        return "Item";
-      }
-    },
+
+  NormalUser,
+
+  ...typeresolvers,
+  Item: {
+    ...Itemresolver,
   },
 };

@@ -1,12 +1,9 @@
 import mongoose from "mongoose";
-import { Order } from "./orders";
-import { Item } from "./item";
-import { User } from "./user";
 const Seller = new mongoose.Schema({
-  info:User,
+  UserId: String,
   gst: Number,
-  items: [Item],
-  ordersRecieved: [Order],
+  items: { type: [String], default: [] },
+  ordersRecieved: { type: [String], default: [] },
 });
 
 export default mongoose.model("Seller", Seller);

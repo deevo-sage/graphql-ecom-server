@@ -1,7 +1,5 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt-nodejs";
-import { Order } from "./orders";
-import { CartItem, Item } from "./item";
 export const User = new mongoose.Schema({
   id: String,
   name: String,
@@ -15,17 +13,16 @@ export const User = new mongoose.Schema({
   gender: String,
   country: String,
   password: String,
-  number: Number,
+  number: { type: Number, default: 0 },
   address: [{ line1: String, line2: String, pincode: Number, state: String }],
-  orders: { type: [Order], default: [] },
+  orders: { type: [String], default: [] },
   seller: {
     type: Boolean,
     default: false,
   },
-  wishlist: { type: [Item], default: [] },
-  currency: String,
-  wallet: Number,
-  cart: { type: [CartItem], default: [] },
+  wishlist: { type: [String], default: [] },
+  wallet: { type: Number, default: 0 },
+  cart: { type: [{ id: String, amount: Number }], default: [] },
 });
 User.pre("save", function (next) {
   var user = this;
