@@ -441,6 +441,9 @@
     "zen-observable": "^0.8.15",
     "zen-observable-ts": "^0.8.21"
   },
+  "engines": {
+    "node": "14.x"
+  },
   "nodemonConfig": {
     "restartable": "rs",
     "ignore": [
@@ -463,6 +466,7 @@
   },
   "devDependencies": {},
   "scripts": {
+    "web":"nodemon",
     "start": "nodemon",
     "nmodexec": "clear && babel-node src/server.js --presets es2015,stage-2",
     "test": "echo \"Error: no test specified\" && exit 1"
