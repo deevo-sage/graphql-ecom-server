@@ -464,9 +464,8 @@
   "devDependencies": {},
   "scripts": {
     "start": "nodemon",
-    "nmodexec":"clear && babel-node src/server.js --presets es2015,stage-2",
+    "nmodexec": "clear && babel-node src/server.js --presets es2015,stage-2",
     "test": "echo \"Error: no test specified\" && exit 1"
-  
   },
   "repository": {
     "type": "git",

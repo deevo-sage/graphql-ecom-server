@@ -1,7 +1,7 @@
 import { gql } from "apollo-server-express";
 export const typeDefs = gql`
-  interface User {
-    id: ID!
+  type User {
+    id: String!
     email: String!
     password: String!
     name: String!
@@ -9,36 +9,20 @@ export const typeDefs = gql`
     country: String!
     number: Int
     address: [Address]!
-    order: [Order]!
-    seller: Boolean
-    wallet: Int
-  }
-  type NormalUser implements User {
-    id: ID!
-    email: String!
-    password: String!
-    name: String!
-    gender: String!
-    country: String!
-    number: Int
-    address: [Address]!
-    order: [Order]!
-    seller: Boolean
+    orders: [Order]!
     wishlist: [Item]!
     wallet: Int
     cart: [CartItem]!
   }
-  type Seller implements User {
-    id: ID!
-    email: String!
+  type Seller {
+    id: String!
+    selleremail: String!
     password: String!
     name: String!
     gender: String!
     country: String!
     number: Int
     address: [Address]!
-    order: [Order]!
-    seller: Boolean
     wallet: Int
     gst: Int
     items: [Item]!
@@ -52,7 +36,7 @@ export const typeDefs = gql`
   }
 
   type CartItem {
-    _id: ID!
+    _id: String!
     amount: Int!
     name: String!
     description: String!
@@ -65,7 +49,7 @@ export const typeDefs = gql`
   }
 
   type Item {
-    _id: ID!
+    _id: String!
     name: String!
     description: String!
     pictures: [String]!
@@ -78,14 +62,15 @@ export const typeDefs = gql`
     wishlisted: [User]
   }
   type Order {
+    _id: String!
     items: [CartItem]
-    userID: String!
+    user: User!
     payment: Boolean!
     status: String!
   }
   input CartIteminput {
     amount: Int!
-    id: ID!
+    itemId: String!
   }
   input Addressinput {
     line1: String!
@@ -96,6 +81,9 @@ export const typeDefs = gql`
   type Query {
     getUser: [User]!
     getOneUser(id: String!): User!
+    getSeller(id: String!): Seller!
+    getSellers: [Seller]!
+
     getItem(id: String!): Item!
     getItems(limit: Int): [Item]!
     getCategoryItems(category: String!, limit: Int): [Item]!
@@ -123,6 +111,25 @@ export const typeDefs = gql`
     updateAddress(id: String!, address: [Addressinput]!): User
     updateWishlist(id: String!, wishlist: [String]!): User!
     updateCart(id: String!, cart: [CartIteminput]!): User!
+    createSeller(
+      name: String!
+      selleremail: String!
+      password: String!
+      number: Int
+      gender: String!
+      country: String!
+    ): Seller!
+    updateSeller(
+      id: String!
+      name: String!
+      email: String!
+      password: String!
+      number: Int!
+      gender: String!
+      country: String!
+      seller: Boolean!
+    ): Seller!
+    updateSellerAddress(id: String!, address: [Addressinput]!): Seller!
     createItem(
       name: String!
       description: String!
@@ -142,10 +149,10 @@ export const typeDefs = gql`
     itemSold(id: String!, amount: Int): Item!
     deleteItem(id: String!): Item!
     createOrder(
-      userId: String!
+      user: String!
       payment: Boolean!
       status: String!
-      orderedItems: [CartIteminput]!
+      items: [CartIteminput]!
     ): Order!
     updateOrder(id: String!, payment: Boolean!, status: String!): Order!
   }

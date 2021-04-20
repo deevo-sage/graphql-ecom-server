@@ -1,33 +1,32 @@
-import User from "../models/user";
-import Seller from "../models/Seller";
+import Usermodel from "../models/user";
+import Itemmodel from "../models/item";
+import Ordermodel from "../models/orders";
 
 export const UserQueries = {
   getUser: async (_, input) => {
-    const users = await User.find({});
+    const users = await Usermodel.find({});
+    console.log(users[0]);
     return users;
   },
   getOneUser: async (_, input) => {
-    const requiredUser = await User.findById(input.id);
+    const requiredUser = await Usermodel.findById(input.id);
     return requiredUser;
   },
 };
 
 export const UserMutations = {
   createUser: async (_, input) => {
-    let newuser = new User(input);
+    let newuser = new Usermodel(input);
     newuser.id = newuser._id;
     await newuser.save();
-    if (!newuser.orders) newuser.orders = [];
 
-    if (!newuser.wishlist) newuser.wishlist = [];
-    if (!newuser.address) newuser.address = [];
     return newuser;
   },
   updateUser: async (_, input) => {
     const userId = input.id;
     delete input.id;
     console.log(input);
-    const updatedUser = await User.findByIdAndUpdate(
+    const updatedUser = await UsermodelfindByIdAndUpdate(
       userId,
       input,
       (err, doc) => doc
@@ -38,7 +37,7 @@ export const UserMutations = {
     const userId = input.id;
     delete input.id;
     console.log(input);
-    const updatedUser = await User.findByIdAndUpdate(
+    const updatedUser = await Usermodel.findByIdAndUpdate(
       userId,
       input,
       (err, doc) => doc
@@ -49,7 +48,7 @@ export const UserMutations = {
     const userId = input.id;
     delete input.id;
     console.log(input);
-    const updatedUser = await User.findByIdAndUpdate(
+    const updatedUser = await Usermodel.findByIdAndUpdate(
       userId,
       input,
       (err, doc) => doc
@@ -60,7 +59,7 @@ export const UserMutations = {
     const userId = input.id;
     delete input.id;
     console.log(input);
-    const updatedUser = await User.findByIdAndUpdate(
+    const updatedUser = await Usermodel.findByIdAndUpdate(
       userId,
       input,
       (err, doc) => doc
@@ -68,22 +67,21 @@ export const UserMutations = {
     return updatedUser;
   },
 };
-export const NormalUser = {
-  order: async (user) => {
-    // let orarray = [
-    //   { status: "single", payment: true },
-    //   { status: "single", payment: true },
-    // ];
-    const orderpromises = user.orders.map((item) =>
-      Order.findById({ id: item })
-    );
-    const results = await Promise.all(orderpromises);
-    // console.log({orderpromises,resultarr});
+export const User = {
+  orders: async (user) => {
+    const results = await Ordermodel.find({
+      _id: {
+        $in: user.orders,
+      },
+    });
     return results;
   },
   cart: async (user) => {
-    const cartpromises = user.cart.map((item) => Order.findById(item.id));
-    const results = await Promise.all(cartpromises);
+    const results = await Itemmodel.find({
+      _id: {
+        $in: user.cart,
+      },
+    });
     const final = results.map((item, key) => {
       return {
         ...item,
@@ -93,8 +91,11 @@ export const NormalUser = {
     return final;
   },
   wishlist: async (user) => {
-    const cartpromises = user.wishlist.map((item) => Order.findById(item.id));
-    const results = await Promise.all(cartpromises);
+    const results = await Itemmodel.find({
+      _id: {
+        $in: user.wishlist,
+      },
+    });
     return results;
   },
 };

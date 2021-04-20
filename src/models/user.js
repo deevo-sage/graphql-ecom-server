@@ -16,10 +16,7 @@ export const User = new mongoose.Schema({
   number: { type: Number, default: 0 },
   address: [{ line1: String, line2: String, pincode: Number, state: String }],
   orders: { type: [String], default: [] },
-  seller: {
-    type: Boolean,
-    default: false,
-  },
+ 
   wishlist: { type: [String], default: [] },
   wallet: { type: Number, default: 0 },
   cart: { type: [{ id: String, amount: Number }], default: [] },

@@ -1,7 +1,11 @@
 import mongoose from "mongoose";
 export const Order = new mongoose.Schema({
-  orderedItems: { type: [{ id: String, amount: Number }], default: [] },
-  userId: String,
+  items: {
+    type: [{ itemId: String, amount: Number }],
+    default: [],
+    _id: false,
+  },
+  user: String,
   payment: Boolean,
   status: String,
 });
